@@ -21,14 +21,16 @@ Angular是微软开发的JS结构化框架，Angular不同于JQuery，JQuery是J
 
 # 4.环境搭建
 
-> > > ```shell
-> > > // 安装ng-cli命令行
-> > > npm install -g @angular/cli
-> > > // 新建项目
-> > > ng new my-app
-> > > // 运行项目
-> > > ng serve --open
-> > > ```
+```shell
+// 安装ng-cli命令行
+npm install -g @angular/cli
+// 新建项目
+ng new my-app
+// 运行项目
+ng serve --open
+```
+
+
 
 ## 5.概念理解
 
@@ -36,7 +38,8 @@ Angular是微软开发的JS结构化框架，Angular不同于JQuery，JQuery是J
 
 - ### protractor端到端测试
 
--  
+  
+
 
 ## 6.Angular项目启动过程
 
@@ -146,9 +149,9 @@ ng generate component mycomponents
   - 将引入模块添加到@NgModule对象中的`imports`（模块依赖）中
 
   ```typescript
-  import { FormModule } form '@angular/form'
+  import { FormsModule } from '@angular/forms'
   @Ngmodule({
-    imports: [FormModule]
+    imports: [FormsModule]
   })
   ```
 
