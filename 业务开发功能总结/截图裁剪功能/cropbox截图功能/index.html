@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Crop Box</title>
+    <link rel="stylesheet" href="style.css" type="text/css" />
+    <style>
+        .container
+        {
+            position: absolute;
+            top: 10%; left: 10%; right: 0; bottom: 0;
+        }
+        .action
+        {
+            width: 400px;
+            height: 30px;
+            margin: 10px 0;
+        }
+        .cropped>img
+        {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+<script src="./cropbox.js"></script>
+<div class="container">
+    <form id="ajaxForm">
+        <div class="imageBox">
+            <!-- 裁剪区域 -->
+            <div class="thumbBox"></div>
+            <!-- 裁剪图片 -->
+            <div class="spinner" style="display: none">Loading...</div>
+        </div>
+        <div class="action">
+            <!-- 上传文件按钮 -->
+            <input type="file" id="file" name="image" style="float:left; width: 250px">
+            <input type="text" name="name" style="float:left; width: 250px" value="123456">
+            <!-- 裁剪选项 -->
+            <input type="button" id="btnCrop" value="Crop" style="float: right">
+            <!-- 放大 -->
+            <input type="button" id="btnZoomIn" value="+" style="float: right">
+            <!-- 缩小 -->
+            <input type="button" id="btnZoomOut" value="-" style="float: right">
+            <input type="submit" id="uploadForm" value="上传文件">
+        </div>
+        <div class="cropped">
+
+        </div>
+    </form>
+</div>
+<script type="text/javascript">
+    $(window).load(function() {
+        var options =
+        {
+            thumbBox: '.thumbBox',//裁剪区域class
+            spinner: '.spinner',//裁剪主图class
+            imgSrc: ''//默认图片
+        }
+        var imgfile = '';
+        // 配置默认选项
+        var cropper = $('.imageBox').cropbox(options);
+        $('#file').on('change', function(){
+            // 读取文件并转换为base64
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                options.imgSrc = e.target.result;
+                cropper = $('.imageBox').cropbox(options);
+            }
+            reader.readAsDataURL(this.files[0]);
+        })
+        $('#btnCrop').on('click', function(){
+            // 裁剪
+            var img = cropper.getDataURL();
+            imgfile = dataURLtoFile(img, (Math.random()*10000000).toString(16)+'.png');
+            $('.cropped').append('<img src="'+img+'">');
+        })
+        $('#btnZoomIn').on('click', function(){
+            // 放大
+            cropper.zoomIn();
+        })
+        $('#btnZoomOut').on('click', function(){
+            // 缩小
+            cropper.zoomOut();
+        })
+        $('#uploadForm').on('click', function(e){
+            // 上传表单
+            e.preventDefault();
+            var formData = new FormData();
+            formData.append('file', imgfile);
+            $.ajax({
+                type:'post',
+                url:'post.php',
+                data: formData,
+                dataType:'json',
+                contentType: false,
+                processData: false,
+                success: function(){
+                    console.log('ok')
+                }
+            })
+            
+        })
+    });
+     //将base64转换为文件
+    function dataURLtoFile (dataurl, filename) { 
+        var arr = dataurl.split(','),
+            mime = arr[0].match(/:(.*?);/)[1],
+            bstr = atob(arr[1]),
+            n = bstr.length,
+            u8arr = new Uint8Array(n);
+        while (n--) {
+            u8arr[n] = bstr.charCodeAt(n);
+        }
+        return new File([u8arr], filename, { type: mime });
+    };
+
+</script>
+
+</body>
+</html>
